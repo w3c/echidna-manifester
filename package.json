@@ -1,8 +1,8 @@
 {
   "name": "echidna-manifester",
   "version": "0.0.1",
-  "private": true,
   "license": "MIT",
+  "repository": "git@github.com:darobin/echidna-manifester.git",
   "dependencies": {
     "nightmare": "^1.8.2",
     "nopt": "^3.0.1",
