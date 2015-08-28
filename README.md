@@ -58,7 +58,15 @@ $ echidna-manifester /tmp/spec.html '{"format": "plain"}'
 $ echidna-manifester https://foo.com/bar.html '{"includeErrors": true, "includeTypes": true}'
 ```
 
-**As a Node.js module**: `echidna-manifester` exports only one function: `run`.
+**As a Node.js module**: `echidna-manifester` exports only one function, `run`.
+These are its arguments:
+
+1. `url` (`String`): required
+2. `options` (`Object`): optional.  
+  If absent, default options will be applied.
+3. `callback` (`Function`): optional.  
+  Signature: `function(data)`.  
+  If absent, the output will be `console.log`ged.
 
 ```javascript
 var em = require('echidna-manifester');
@@ -80,9 +88,9 @@ The object `options` may include these properties (default values are **in bold*
 
 * `'format'`:  
   {**`'manifest'`**, `'json'`, `'plain'`}  
-  * `'manifest'`: a format that is appropriate for an [Echidna](https://github.com/w3c/echidna) manifest (plain text)
+  * `'manifest'`: a format that is appropriate for an [Echidna](https://github.com/w3c/echidna) manifest
   * `'json'`: a JSON object
-  * `'plain'`: plain text, one line per resource, fields separated by spaces: `URL STATUS [TYPE]`
+  * `'plain'`: text, one line per resource, fields separated by spaces: `URL STATUS [TYPE]`
 * `'compactUrls'`  
   {**`true`**, `false`}  
   Omit the beginning of the URL
