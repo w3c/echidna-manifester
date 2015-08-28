@@ -27,12 +27,12 @@ parameters for that. Presumably that's not too bad a problem.
 
 ## Installation
 
-To use it from the command line, type:
+To use it **from the command line**, type:
 ```bash
 $ npm install -g echidna-manifester
 ```
 
-To use as a Node.js module, add it to your `package.json` file:
+To use **as a Node.js module**, add it to your `package.json` file:
 ```javascript
 "dependencies": {
     ⋮
@@ -46,7 +46,7 @@ var em = require('echidna-manifester');
 
 ## Usage
 
-From the command line, invoke it with these arguments:
+**From the command line**, invoke it with these arguments:
 ```bash
 $ echidna-manifester <PATH/TO/FILE> [OPTIONS-AS-JSON]
 ```
@@ -58,7 +58,7 @@ $ echidna-manifester /tmp/spec.html '{"format": "plain"}'
 $ echidna-manifester https://foo.com/bar.html '{"includeErrors": true, "includeTypes": true}'
 ```
 
-As a Node.js module: `echidna-manifester` exports only one function: `run`.
+**As a Node.js module**: `echidna-manifester` exports only one function: `run`.
 
 ```javascript
 var em = require('echidna-manifester');
@@ -96,7 +96,7 @@ The object `options` may include these properties (default values are **in bold*
 
 ### Examples
 
-These examples use this dummy spec:  
+All these examples use this dummy spec:  
 [`http://www.w3.org/People/Antonio/spec/dummy-spec.html`](http://www.w3.org/People/Antonio/spec/dummy-spec.html)
 
 Use from the command line, with default options:
@@ -120,11 +120,10 @@ em.run(
         "format":        "json",
         "includeErrors": true
     },
-    doStuffWithData
+    processJSON
 );
 ```
 
-Output:
 ```json
 {
     "ok": [
