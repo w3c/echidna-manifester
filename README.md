@@ -7,7 +7,7 @@ Some people (whose names shall remain a secret) complained that it could be too 
 What this tool does is load a file you give to it (local or URL) and try to list
 all the resources that it loads, and that are situated under the same directory as that file.
 
-In theory, if you've done things well (and your document can be published under TR without 
+In theory, if you've done things well (and your document can be published under TR without
 modification), then this should list all the dependencies you have that should go into your Echidna
 manifest. You can paste them there.
 
@@ -17,8 +17,8 @@ There are good reasons that this is not supported directly by Echidna. In the ge
 had a reliable process to detect all the resources that a Web page might load then you would have a
 solution to the Halting Problem.
 
-So keep in mind that this isn't perfect. For instance, if your document loads stuff that causes 
-other stuff to be loaded by script over time, it's possible that the process will time out before 
+So keep in mind that this isn't perfect. For instance, if your document loads stuff that causes
+other stuff to be loaded by script over time, it's possible that the process will time out before
 some resources are loaded, and so they won't get loaded. For specs that should not happen, but for
 instance if ReSpec+PhantomJS are being slow together you could be out of luck.
 
@@ -27,43 +27,38 @@ parameters for that. Presumably that's not too bad a problem.
 
 ## Installation
 
-### To use from the command line
-
+To use it from the command line, type:
 ```bash
-npm install -g echidna-manifester
+$ npm install -g echidna-manifester
 ```
 
-### To use as a library
-
-```json
-{
-  "dependencies": {
+To use as a Node.js module, add it to your `package.json` file:
+```javascript
+"dependencies": {
+    ⋮
     "echidna-manifest": "^0.1.0"
-  }
 }
 ```
-
+And *require* it as usual:
 ```javascript
 var em = require('echidna-manifester');
 ```
 
 ## Usage
 
-### From the command line
-
+From the command line, invoke it with these arguments:
 ```bash
 $ echidna-manifester <PATH/TO/FILE> [OPTIONS-AS-JSON]
 ```
 
-Examples:
-
+Some examples:
 ```bash
 $ echidna-manifester http://berjon.com/
 $ echidna-manifester /tmp/spec.html '{"format": "plain"}'
 $ echidna-manifester https://foo.com/bar.html '{"includeErrors": true, "includeTypes": true}'
 ```
 
-### As a library
+As a Node.js module: `echidna-manifester` exports only one function: `run`.
 
 ```javascript
 var em = require('echidna-manifester');
@@ -73,7 +68,7 @@ var options = {
     "compactUrls": false,
 };
 var callback = function(data) {
-    sendByEmail(data);
+    console.dir(data);
 };
 
 em.run(url, options, callback);
@@ -81,28 +76,32 @@ em.run(url, options, callback);
 
 ## Output formats and options
 
-The object `options` may include these properties (in **bold**, default values):
+The object `options` may include these properties (default values are **in bold**):
 
 * `'format'`:  
   {**`'manifest'`**, `'json'`, `'plain'`}  
-  ** `'manifest'`: format appropriate for an [Echidna](https://github.com/w3c/echidna) manifest (plain text)
-  ** `'json'`: JSON object
-  ** `'plain'`: plain text, one line per resource; fields: `URL status type`
+  * `'manifest'`: a format that is appropriate for an [Echidna](https://github.com/w3c/echidna) manifest (plain text)
+  * `'json'`: a JSON object
+  * `'plain'`: plain text, one line per resource, fields separated by spaces: `URL STATUS [TYPE]`
 * `'compactUrls'`  
   {**`true`**, `false`}  
-  Omit the beginning of the URL that is common to all resources
+  Omit the beginning of the URL
 * `'includeErrors'`  
   {`true`, **`false`**}  
   Whether resources that could *not* be loaded should be included in the output, too
 * `'includeTypes'`  
   {`true`, **`false`**}  
-  Add MIME metadata to idenfity the type of resource, if known (this parameter is ignored when the format is `'manifest'`)
+  Add a string to idenfity the type of resource (kind of MIME), if possible;  
+  this parameter is ignored when the format is `'manifest'`
 
 ### Examples
 
+These examples use this dummy spec:  
+[`http://www.w3.org/People/Antonio/spec/dummy-spec.html`](http://www.w3.org/People/Antonio/spec/dummy-spec.html)
+
+Use from the command line, with default options:
 ```bash
-$ node echidna-manifester \
-  http://www.w3.org/People/Antonio/spec/dummy-spec.html
+$ node echidna-manifester http://www.w3.org/People/Antonio/spec/dummy-spec.html
 dummy-spec.html
 foo.css
 baz.js
@@ -111,54 +110,41 @@ http://www.w3.org/2014/10/stdvidthumb.png
 bar.jpeg
 ```
 
+Invoke from JavaScript, specifying JSON output and failed resources too:
 ```javascript
-require('echidna-manifester').run(
+var em = require('echidna-manifester');
+
+em.run(
     'http://www.w3.org/People/Antonio/spec/dummy-spec.html',
-	{
-	    "format":        "json",
-		"includeErrors": true
-	},
-	doStuffWithData
+    {
+        "format":        "json",
+        "includeErrors": true
+    },
+    doStuffWithData
 );
 ```
 
+Output:
 ```json
 {
-  "ok": [
-    {
-      "url": "dummy-spec.html"
-    },
-    {
-      "url": "foo.css"
-    },
-    {
-      "url": "baz.js"
-    },
-    {
-      "url": "http://www.w3.org/Consortium/Offices/w3coffice.png"
-    },
-    {
-      "url": "http://www.w3.org/2014/10/stdvidthumb.png"
-    },
-    {
-      "url": "bar.jpeg"
-    }
-  ],
-  "error": [
-    {
-      "url": "i-do-not-exist.css"
-    },
-    {
-      "url": "i-do-not-exist.svg"
-    }
-  ]
+    "ok": [
+        {"url": "dummy-spec.html"},
+        {"url": "foo.css"},
+        {"url": "baz.js"},
+        {"url": "http://www.w3.org/Consortium/Offices/w3coffice.png"},
+        {"url": "http://www.w3.org/2014/10/stdvidthumb.png"},
+        {"url": "bar.jpeg"}
+    ],
+    "error": [
+        {"url": "i-do-not-exist.css"},
+        {"url": "i-do-not-exist.svg"}
+    ]
 }
 ```
 
+From the command line, in plain text, with full URLs and with types:
 ```bash
-$ node echidna-manifester \
-  http://www.w3.org/People/Antonio/spec/dummy-spec.html \
-  '{"format": "plain", "includeTypes": true, "compactUrls": false}'
+$ node echidna-manifester http://www.w3.org/People/Antonio/spec/dummy-spec.html '{"format": "plain", "includeTypes": true, "compactUrls": false}'
 http://www.w3.org/People/Antonio/spec/dummy-spec.html ok html
 http://www.w3.org/People/Antonio/spec/foo.css ok css
 http://www.w3.org/People/Antonio/spec/baz.js ok js
