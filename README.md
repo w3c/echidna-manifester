@@ -1,16 +1,17 @@
+
 # echidna-manifester
 
 Some people (whose names shall remain a secret) complained that it could be too hard to generate
-Echidna manifests.
+[Echidna](https://github.com/w3c/echidna) [manifests](https://github.com/w3c/echidna/wiki/How-to-use-Echidna#request-a-publication).
 
-What this tool does is that it will load a file you give to it (local or URL) and will try to list
-all the resources that it is loaded that are situated under the same directory as that file.
+What this tool does is load a file you give to it (local or URL) and try to list
+all the resources that it loads, and that are situated under the same directory as that file.
 
 In theory, if you've done things well (and your document can be published under TR without 
 modification), then this should list all the dependencies you have that should go into your Echidna
 manifest. You can paste them there.
 
-## WARNINGS
+## Warnings
 
 There are good reasons that this is not supported directly by Echidna. In the general case, if you
 had a reliable process to detect all the resources that a Web page might load then you would have a
@@ -24,18 +25,145 @@ instance if ReSpec+PhantomJS are being slow together you could be out of luck.
 This also does not generate the first entry (the main document) because it can't guess all the
 parameters for that. Presumably that's not too bad a problem.
 
-## INSTALLATION
+## Installation
 
-    npm install -g echidna-manifester
+### To use from the command line
 
-## USAGE
+```bash
+npm install -g echidna-manifester
+```
 
-Simply:
+### To use as a library
 
-    echidna-manifester path/to/file
+```json
+{
+  "dependencies": {
+    "echidna-manifest": "^0.1.0"
+  }
+}
+```
 
-or 
+```javascript
+var em = require('echidna-manifester');
+```
 
-    echidna-manifester http://berjon.com/
+## Usage
 
-It can also be used as a library; if you need that you can figure it out.
+### From the command line
+
+```bash
+$ echidna-manifester <PATH/TO/FILE> [OPTIONS-AS-JSON]
+```
+
+Examples:
+
+```bash
+$ echidna-manifester http://berjon.com/
+$ echidna-manifester /tmp/spec.html '{"format": "plain"}'
+$ echidna-manifester https://foo.com/bar.html '{"includeErrors": true, "includeTypes": true}'
+```
+
+### As a library
+
+```javascript
+var em = require('echidna-manifester');
+var url = 'https://foo.com/bar.html';
+var options = {
+    "format": "json",
+    "compactUrls": false,
+};
+var callback = function(data) {
+    sendByEmail(data);
+};
+
+em.run(url, options, callback);
+```
+
+## Output formats and options
+
+The object `options` may include these properties (in **bold**, default values):
+
+* `'format'`:  
+  {**`'manifest'`**, `'json'`, `'plain'`}  
+  ** `'manifest'`: format appropriate for an [Echidna](https://github.com/w3c/echidna) manifest (plain text)
+  ** `'json'`: JSON object
+  ** `'plain'`: plain text, one line per resource; fields: `URL status type`
+* `'compactUrls'`  
+  {**`true`**, `false`}  
+  Omit the beginning of the URL that is common to all resources
+* `'includeErrors'`  
+  {`true`, **`false`**}  
+  Whether resources that could *not* be loaded should be included in the output, too
+* `'includeTypes'`  
+  {`true`, **`false`**}  
+  Add MIME metadata to idenfity the type of resource, if known (this parameter is ignored when the format is `'manifest'`)
+
+### Examples
+
+```bash
+$ node echidna-manifester \
+  http://www.w3.org/People/Antonio/spec/dummy-spec.html
+dummy-spec.html
+foo.css
+baz.js
+http://www.w3.org/Consortium/Offices/w3coffice.png
+http://www.w3.org/2014/10/stdvidthumb.png
+bar.jpeg
+```
+
+```javascript
+require('echidna-manifester').run(
+    'http://www.w3.org/People/Antonio/spec/dummy-spec.html',
+	{
+	    "format":        "json",
+		"includeErrors": true
+	},
+	doStuffWithData
+);
+```
+
+```json
+{
+  "ok": [
+    {
+      "url": "dummy-spec.html"
+    },
+    {
+      "url": "foo.css"
+    },
+    {
+      "url": "baz.js"
+    },
+    {
+      "url": "http://www.w3.org/Consortium/Offices/w3coffice.png"
+    },
+    {
+      "url": "http://www.w3.org/2014/10/stdvidthumb.png"
+    },
+    {
+      "url": "bar.jpeg"
+    }
+  ],
+  "error": [
+    {
+      "url": "i-do-not-exist.css"
+    },
+    {
+      "url": "i-do-not-exist.svg"
+    }
+  ]
+}
+```
+
+```bash
+$ node echidna-manifester \
+  http://www.w3.org/People/Antonio/spec/dummy-spec.html \
+  '{"format": "plain", "includeTypes": true, "compactUrls": false}'
+http://www.w3.org/People/Antonio/spec/dummy-spec.html ok html
+http://www.w3.org/People/Antonio/spec/foo.css ok css
+http://www.w3.org/People/Antonio/spec/baz.js ok js
+http://www.w3.org/Consortium/Offices/w3coffice.png ok img
+http://www.w3.org/2014/10/stdvidthumb.png ok img
+http://www.w3.org/People/Antonio/spec/bar.jpeg ok img
+```
+
