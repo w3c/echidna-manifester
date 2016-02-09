@@ -21,7 +21,6 @@ var Nightmare = require("nightmare")
 ,   callback
 ,   found
 ,   failed
-,   pending
 ;
 
 var dumpResult = function() {
@@ -108,20 +107,14 @@ var dumpResult = function() {
     return {compactUrl: compactUrl, type: type};
 };
 
-var processRequest = function(res) {
-    pending ++;
-};
-
 var processResult = function(res) {
     if (res && res.status && res.stage && 'end' === res.stage) {
         if (200 === res.status) {
             found[res.url] = getMetadata(res);
-            pending --;
-        } else if (404 === res.status) {
-            failed[res.url] = getMetadata(res);
-            pending --;
         }
-        if (0 === pending) dumpResult();
+        else {
+            failed[res.url] = getMetadata(res);
+        }
     }
 };
 
@@ -138,13 +131,12 @@ exports.run = function (url, opts, cb) {
     callback = cb;
     found = {};
     failed = {};
-    pending = 0;
     var nm = new Nightmare({
         phantomPath: pth.dirname(phantomjs.path) + "/"
     });
-    nm.on("resourceRequested", processRequest);
-    nm.on("resourceReceived",  processResult);
-    nm.on("resourceError",     processResult);
+    nm.on("resourceReceived", processResult);
+    nm.on("resourceError",    processResult);
+    nm.on("loadFinished",     dumpResult);
     nm.goto(document);
     nm.run();
 };
@@ -157,9 +149,12 @@ if (!module.parent) {
     if (process.argv.length > 3) {
         opts = JSON.parse(process.argv[3]);
     }
-    if (!source) console.error("Usage: echidna-manifester <PATH-or-URL> [OPTIONS-as-json]");
-    // if path is a file, make a URL from it
-    if (!/^\w+:/.test(source)) source = "file://" + pth.join(process.cwd(), source);
-    exports.run(source, opts);
+    if (!source) {
+        console.error("Usage: echidna-manifester <PATH-or-URL> [OPTIONS-as-json]");
+    }
+    else {
+        // if path is a file, make a URL from it
+        if (!/^\w+:/.test(source)) source = "file://" + pth.join(process.cwd(), source);
+        exports.run(source, opts);
+    }
 }
-
