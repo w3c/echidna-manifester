@@ -26,7 +26,6 @@
   },
   "dependencies": {
     "nightmare": "^1.8.2",
-    "nopt": "^3.0.1",
     "phantomjs": "^1.9.16"
   },
   "main": "./echidna-manifester",
