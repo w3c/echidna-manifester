@@ -25,9 +25,8 @@
     "url": "https://github.com/darobin/echidna-manifester/issues"
   },
   "dependencies": {
-    "nightmare": "^1.8.2",
-    "nopt": "^3.0.1",
-    "phantomjs": "^1.9.16"
+    "nightmare": "3.0.1",
+    "phantomjs-prebuilt": "2.1.16"
   },
   "main": "./echidna-manifester",
   "bin": {

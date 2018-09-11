@@ -12,7 +12,7 @@ var DEFAULT_OPTIONS = {
 
 // “Global” variables:
 var Nightmare = require("nightmare")
-,   phantomjs = require("phantomjs")
+,   phantomjs = require("phantomjs-prebuilt")
 ,   pth       = require("path")
 ,   u         = require("url")
 ,   document
