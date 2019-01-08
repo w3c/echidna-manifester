@@ -1,0 +1,20 @@
+<html>
+  <head>
+    <title>Dummy spec to test echidna-manifester</title>
+    <link rel="stylesheet" href="foo.css">
+    <link rel="stylesheet" href="i-do-not-exist.css">
+  </head>
+  <body>
+    <h1>Dummy spec to test <em>echidna-manifester</em></h1>
+    <p>See <a href="https://github.com/darobin/echidna-manifester">echidna-manifester</a> for more info.</p>
+    <p>This image exists and it's within this base directory:</p>
+    <p><img alt="Existing image here" src="bar.jpeg">
+    <p>This image exists, but it's somewhere else:</p>
+    <p><img alt="Existing image in a different location" src="http://www.w3.org/2014/10/stdvidthumb.png">
+    <p>This image does <em>not</em> exist:</p>
+    <p><img alt="Missing image" src="i-do-not-exist.svg">
+    <p>This image will be loaded asynchronously when <code>baz.js</code> is executed:</p>
+    <p><img id="asyncImg" alt="Asynchronous image">
+    <script src="baz.js"></script>
+  </body>
+</html>

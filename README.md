@@ -104,12 +104,11 @@ The object `options` may include these properties (default values are **in bold*
 
 ### Examples
 
-All these examples use this dummy spec:  
-[`http://www.w3.org/People/Antonio/spec/dummy-spec.html`](http://www.w3.org/People/Antonio/spec/dummy-spec.html)
+All these examples use `example/dummy-spec.html`.
 
 Use from the command line, with default options:
 ```bash
-$ node echidna-manifester http://www.w3.org/People/Antonio/spec/dummy-spec.html
+$ node echidna-manifester example/dummy-spec.html
 dummy-spec.html
 foo.css
 baz.js
@@ -123,7 +122,7 @@ Invoke from JavaScript, specifying JSON output and failed resources too:
 var em = require('echidna-manifester');
 
 em.run(
-    'http://www.w3.org/People/Antonio/spec/dummy-spec.html',
+    'example/dummy-spec.html',
     {
         "format":        "json",
         "includeErrors": true
@@ -151,12 +150,12 @@ em.run(
 
 From the command line, in plain text, with full URLs and with types:
 ```bash
-$ node echidna-manifester http://www.w3.org/People/Antonio/spec/dummy-spec.html '{"format": "plain", "includeTypes": true, "compactUrls": false}'
-http://www.w3.org/People/Antonio/spec/dummy-spec.html ok html
-http://www.w3.org/People/Antonio/spec/foo.css ok css
-http://www.w3.org/People/Antonio/spec/baz.js ok js
+$ node echidna-manifester example/dummy-spec.html '{"format": "plain", "includeTypes": true, "compactUrls": false}'
+example/dummy-spec.html ok html
+example/foo.css ok css
+example/baz.js ok js
 http://www.w3.org/Consortium/Offices/w3coffice.png ok img
 http://www.w3.org/2014/10/stdvidthumb.png ok img
-http://www.w3.org/People/Antonio/spec/bar.jpeg ok img
+example/bar.jpeg ok img
 ```
 
