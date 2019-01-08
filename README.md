@@ -1,6 +1,8 @@
 
 # echidna-manifester
 
+:warning: This project is discontinued, and not being actively maintained.
+
 Some people (whose names shall remain a secret) complained that it could be too hard to generate
 [Echidna](https://github.com/w3c/echidna) [manifests](https://github.com/w3c/echidna/wiki/How-to-use-Echidna#request-a-publication).
 
